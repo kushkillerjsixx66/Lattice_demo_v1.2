@@ -1,0 +1,36 @@
+{
+  "url": "http://127.0.0.1:8080/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "Lattice",
+      "hasCanvas": false,
+      "bodyTextLen": 1053,
+      "bodyTextHash": "7d67452e6ea7307809ca5f6bcc49fa127fd0c346e0e7e34d6bb2fb1358e0525d",
+      "bodyTextPrefix": "Lattice Pipeline Prompt pack Cases Traces OPERATOR PIPELINE Same",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "Lattice",
+      "hasCanvas": false,
+      "bodyTextLen": 1053,
+      "bodyTextHash": "7d67452e6ea7307809ca5f6bcc49fa127fd0c346e0e7e34d6bb2fb1358e0525d",
+      "bodyTextPrefix": "Lattice Pipeline Prompt pack Cases Traces OPERATOR PIPELINE Same",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-preview.json"
+}
