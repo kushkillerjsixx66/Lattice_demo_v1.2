@@ -55,7 +55,7 @@ export interface PipelineResult {
   disposition: Disposition;
   unconstrained: string;
   trace: OperatorTrace;
-  source: "example" | "live";
+  source: "example" | "live" | "simulated";
 }
 
 export interface ExampleSignal {
