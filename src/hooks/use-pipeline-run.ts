@@ -1,5 +1,5 @@
 import { EXAMPLES, getExample } from "@/lib/lattice/examples";
-import { runLivePipeline } from "@/lib/lattice/run-pipeline";
+import { simulatePipeline } from "@/lib/lattice/simulate";
 import { isRunning, useLatticeStore } from "@/lib/lattice/store";
 import type { StageId } from "@/lib/lattice/types";
 
@@ -59,23 +59,16 @@ export function usePipelineRun() {
       return;
     }
 
-    const request = runLivePipeline({ data: { signal } });
+    // Custom signals: deterministic client-side simulation.
+    // Zero network, zero API key, source: "simulated".
     await finishExample();
     if (!still()) return;
     useLatticeStore.getState().setPhase("synthesis");
 
     try {
-      const response = await request;
+      const result = simulatePipeline(signal);
       if (!still()) return;
-      if (!response.ok) {
-        const message =
-          response.error === "unavailable"
-            ? "Live governance is not available in this environment. Run a preloaded signal — those traces are complete."
-            : response.error;
-        useLatticeStore.getState().setError(message);
-        return;
-      }
-      useLatticeStore.getState().completeRun(response.result);
+      useLatticeStore.getState().completeRun(result);
     } catch (err) {
       if (!still()) return;
       useLatticeStore.getState().setError(
