@@ -28,7 +28,7 @@ export function GovernedRuntimePanel() {
         <h2 className="mt-2 font-display text-3xl tracking-tight">Propose a change to a governed system</h2>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
           Governance is exercised as state transition, not decoration. Disagreement can remain unresolved,
-          a boundary violation can halt execution, and only a clean path produces a mutation proposal.
+          a boundary violation can halt execution, and only an independently audited clean path produces a mutation proposal.
         </p>
       </div>
 
@@ -69,13 +69,14 @@ export function GovernedRuntimePanel() {
 
 function RunResult({ run }: { run: GovernedRun }) {
   const final = run.trace.entries.at(-1);
-  const disposition: Disposition | "NONE" = final?.witness?.disposition ?? "NONE";
+  const audit = run.stumpy;
+  const disposition: Disposition | "NONE" = audit?.disposition ?? "NONE";
   const eligible = disposition === "ELIGIBLE";
 
   return (
     <div className="flex flex-col gap-5 border-t border-border pt-5">
       <div className="grid gap-3 sm:grid-cols-3">
-        <Metric label="Cognitive state" value={final?.state ?? run.envelope.state} />
+        <Metric label="Cognitive state" value={audit?.state ?? final?.state ?? run.envelope.state} />
         <Metric label="Disposition" value={disposition} />
         <Metric label="Canonicalization" value={run.mutation?.canonicalization.status ?? "NOT CREATED"} />
       </div>
@@ -87,10 +88,27 @@ function RunResult({ run }: { run: GovernedRun }) {
             {eligible ? "Mutation eligible for human review" : `Runtime disposition: ${disposition}`}
           </p>
           <p className="mt-1 text-sm text-muted">
-            {eligible ? "A Mutation Envelope exists. It is a proposal, not canonical state." : "The canonical boundary remains closed."}
+            {eligible ? "Stumpy independently audited the accumulated evidence. A Mutation Envelope exists, but it is still only a proposal." : audit?.blocking_condition ?? "The canonical boundary remains closed."}
           </p>
         </div>
       </div>
+
+      {audit ? (
+        <div className="rounded-xl border border-border p-4">
+          <div className="flex items-baseline justify-between gap-4">
+            <p className="font-mono text-[0.6875rem] tracking-widest text-subtle uppercase">Stumpy Audit</p>
+            <span className="font-mono text-[0.65rem] uppercase">{audit.authority_result} · {audit.reversibility_result}</span>
+          </div>
+          <div className="mt-3 grid gap-2 sm:grid-cols-2">
+            {Object.entries(audit.invariant_results).map(([name, status]) => (
+              <div key={name} className="flex items-center justify-between rounded-lg bg-surface-2 px-3 py-2 font-mono text-[0.65rem]">
+                <span>{name}</span><span>{status}</span>
+              </div>
+            ))}
+          </div>
+          {audit.observations.length ? <p className="mt-3 text-xs leading-relaxed text-muted">{audit.observations.join(" ")}</p> : null}
+        </div>
+      ) : null}
 
       <div>
         <p className="font-mono text-[0.6875rem] tracking-widest text-subtle uppercase">Cognitive state transitions</p>
@@ -101,7 +119,6 @@ function RunResult({ run }: { run: GovernedRun }) {
               <span className="font-mono uppercase">{entry.actor}</span>
               <div>
                 <span className="font-medium">{entry.state} · {entry.event.message}</span>
-                {entry.witness ? <div className="mt-1 font-mono text-[0.65rem] text-muted">{Object.entries(entry.witness.invariant_results).map(([name, status]) => `${name}:${status}`).join(" · ")}</div> : null}
               </div>
             </div>
           ))}
