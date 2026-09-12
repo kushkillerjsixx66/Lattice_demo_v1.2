@@ -5,6 +5,7 @@ import { ContrastView } from "@/components/pipeline/contrast-view";
 import { DispositionMark } from "@/components/pipeline/disposition-mark";
 import { OperatorTrace } from "@/components/pipeline/operator-trace";
 import { StageRail } from "@/components/pipeline/stage-rail";
+import { GovernedRuntimePanel } from "@/components/governed-runtime-panel";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
@@ -54,15 +55,13 @@ function Home() {
         <StageRail />
       </section>
 
+      <GovernedRuntimePanel />
+
       <section className="flex flex-col gap-4">
         <div className="flex items-end justify-between gap-4">
           <div>
-            <h2 className="font-display text-2xl tracking-tight">
-              Run a signal
-            </h2>
-            <p className="mt-1 text-sm text-muted">
-              One click. The contrast is the demonstration.
-            </p>
+            <h2 className="font-display text-2xl tracking-tight">Run a signal</h2>
+            <p className="mt-1 text-sm text-muted">One click. The contrast is the demonstration.</p>
           </div>
         </div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -79,15 +78,10 @@ function Home() {
                   selected && "bg-surface-2",
                 )}
               >
-                <span className="font-mono text-[0.6875rem] tracking-wide text-subtle uppercase">
-                  {example.stakes}
-                </span>
-                <span className="mt-2 font-display text-xl leading-snug tracking-tight">
-                  {example.title}
-                </span>
-                <span className="mt-auto pt-4 inline-flex items-center gap-1.5 font-mono text-[0.6875rem] tracking-wide text-muted uppercase">
-                  Run this
-                  <ArrowRight className="size-3.5" />
+                <span className="font-mono text-[0.6875rem] tracking-wide text-subtle uppercase">{example.stakes}</span>
+                <span className="mt-2 font-display text-xl leading-snug tracking-tight">{example.title}</span>
+                <span className="mt-auto inline-flex items-center gap-1.5 pt-4 font-mono text-[0.6875rem] tracking-wide text-muted uppercase">
+                  Run this <ArrowRight className="size-3.5" />
                 </span>
               </button>
             );
@@ -96,12 +90,9 @@ function Home() {
       </section>
 
       <section className="flex flex-col gap-3">
-        <label htmlFor="signal" className="font-display text-2xl tracking-tight">
-          Or paste your own
-        </label>
+        <label htmlFor="signal" className="font-display text-2xl tracking-tight">Or paste your own</label>
         <p className="text-sm text-muted">
-          A hiring call, a scope fight, a message you want to send. The pipeline
-          will produce both the unconstrained response and a governed trace.
+          A hiring call, a scope fight, a message you want to send. The pipeline will produce both the unconstrained response and a governed trace.
         </p>
         <Textarea
           id="signal"
@@ -112,25 +103,12 @@ function Home() {
           className="min-h-40"
         />
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="font-mono text-[0.6875rem] text-subtle">
-            {signal.trim().length}/2000
-          </p>
-          <Button
-            size="lg"
-            disabled={running || signal.trim().length < 12}
-            onClick={() => run()}
-            className="w-full sm:w-auto"
-          >
+          <p className="font-mono text-[0.6875rem] text-subtle">{signal.trim().length}/2000</p>
+          <Button size="lg" disabled={running || signal.trim().length < 12} onClick={() => run()} className="w-full sm:w-auto">
             {running ? (
-              <>
-                <LoaderCircle className="animate-spin" />
-                Running {isRunning(phase) ? phaseLabel(phase) : "pipeline"}
-              </>
+              <><LoaderCircle className="animate-spin" /> Running {isRunning(phase) ? phaseLabel(phase) : "pipeline"}</>
             ) : (
-              <>
-                Run through Lattice
-                <ArrowRight />
-              </>
+              <><ArrowRight /> Run through Lattice</>
             )}
           </Button>
         </div>
@@ -139,45 +117,27 @@ function Home() {
       <section id="run-output" className="scroll-mt-6">
         {error ? (
           <div className="rounded-xl bg-surface p-5 shadow-[var(--shadow-border)]">
-            <p className="font-mono text-[0.6875rem] tracking-widest text-hold uppercase">
-              Gate
-            </p>
+            <p className="font-mono text-[0.6875rem] tracking-widest text-hold uppercase">Gate</p>
             <p className="mt-2 text-sm leading-relaxed text-fg">{error}</p>
           </div>
         ) : null}
-
         {running && !result ? (
           <div className="rounded-xl bg-surface p-5 shadow-[var(--shadow-border)]">
-            <p className="font-mono text-[0.6875rem] tracking-widest text-subtle uppercase">
-              {phaseLabel(phase)}
-            </p>
-            <p className="mt-2 font-display text-2xl tracking-tight">
-              Reading the signal under constraint.
-            </p>
-            <p className="mt-2 max-w-lg text-sm text-muted">
-              Drift first, then evidence class, then the gate. The output is
-              allowed to be a hold.
-            </p>
+            <p className="font-mono text-[0.6875rem] tracking-widest text-subtle uppercase">{phaseLabel(phase)}</p>
+            <p className="mt-2 font-display text-2xl tracking-tight">Reading the signal under constraint.</p>
+            <p className="mt-2 max-w-lg text-sm text-muted">Drift first, then evidence class, then the gate. The output is allowed to be a hold.</p>
           </div>
         ) : null}
-
         {result && !running ? (
           <div className="flex flex-col gap-6">
             <DispositionMark disposition={result.disposition} />
-            <Tabs
-              value={tab}
-              onValueChange={(value) => setTab(value as "contrast" | "trace")}
-            >
+            <Tabs value={tab} onValueChange={(value) => setTab(value as "contrast" | "trace")}>
               <TabsList>
                 <TabsTrigger value="contrast">Contrast</TabsTrigger>
                 <TabsTrigger value="trace">Operator trace</TabsTrigger>
               </TabsList>
-              <TabsContent value="contrast" className="mt-5">
-                <ContrastView result={result} />
-              </TabsContent>
-              <TabsContent value="trace" className="mt-5">
-                <OperatorTrace result={result} />
-              </TabsContent>
+              <TabsContent value="contrast" className="mt-5"><ContrastView result={result} /></TabsContent>
+              <TabsContent value="trace" className="mt-5"><OperatorTrace result={result} /></TabsContent>
             </Tabs>
           </div>
         ) : null}
@@ -188,15 +148,10 @@ function Home() {
 
 function phaseLabel(phase: string): string {
   switch (phase) {
-    case "vara":
-      return "Vara:Scan";
-    case "stumpy":
-      return "Stumpy:Audit";
-    case "enforce":
-      return "Enforce:Gate";
-    case "synthesis":
-      return "Synthesis";
-    default:
-      return "Pipeline";
+    case "vara": return "Vara:Scan";
+    case "stumpy": return "Stumpy:Audit";
+    case "enforce": return "Enforce:Gate";
+    case "synthesis": return "Synthesis";
+    default: return "Pipeline";
   }
 }
