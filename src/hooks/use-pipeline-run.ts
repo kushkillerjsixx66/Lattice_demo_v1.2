@@ -73,6 +73,8 @@ export function usePipelineRun() {
       useLatticeStore.getState().completeRun({
         ...result,
         unconstrained: baseline.response,
+        baselineSource: baseline.source,
+        baselineModel: baseline.model,
       });
     } catch (err) {
       if (!still()) return;
