@@ -1,6 +1,13 @@
 import type { PipelineResult } from "@/lib/lattice/types";
 
 export function ContrastView({ result }: { result: PipelineResult }) {
+  const baselineLabel =
+    result.baselineSource === "ollama"
+      ? `Live Ollama${result.baselineModel ? ` · ${result.baselineModel}` : ""}`
+      : result.baselineSource === "fallback"
+        ? "Conventional fallback"
+        : "Authored demo baseline";
+
   return (
     <div className="flex flex-col gap-5">
       <div className="rounded-xl bg-surface p-4 shadow-[var(--shadow-border)] sm:p-5">
@@ -36,7 +43,7 @@ export function ContrastView({ result }: { result: PipelineResult }) {
             <h3 className="font-mono text-[0.6875rem] tracking-widest text-subtle uppercase">
               Unconstrained
             </h3>
-            <span className="text-[0.6875rem] text-subtle">Helpful and complete</span>
+            <span className="text-right text-[0.6875rem] text-subtle">{baselineLabel}</span>
           </header>
           <div className="prose-output text-sm leading-relaxed text-muted whitespace-pre-wrap text-pretty">
             {result.unconstrained}
