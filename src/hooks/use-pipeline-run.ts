@@ -1,4 +1,5 @@
 import { EXAMPLES, getExample } from "@/lib/lattice/examples";
+import { getBaselineResponse } from "@/lib/lattice/baseline";
 import { simulatePipeline } from "@/lib/lattice/simulate";
 import { isRunning, useLatticeStore } from "@/lib/lattice/store";
 import type { StageId } from "@/lib/lattice/types";
@@ -59,16 +60,20 @@ export function usePipelineRun() {
       return;
     }
 
-    // Custom signals: deterministic client-side simulation.
-    // Zero network, zero API key, source: "simulated".
+    // Custom signals: the governed trace remains deterministic, while the
+    // unconstrained side is produced by a conventional baseline engine.
     await finishExample();
     if (!still()) return;
     useLatticeStore.getState().setPhase("synthesis");
 
     try {
       const result = simulatePipeline(signal);
+      const baseline = await getBaselineResponse(signal);
       if (!still()) return;
-      useLatticeStore.getState().completeRun(result);
+      useLatticeStore.getState().completeRun({
+        ...result,
+        unconstrained: baseline.response,
+      });
     } catch (err) {
       if (!still()) return;
       useLatticeStore.getState().setError(
