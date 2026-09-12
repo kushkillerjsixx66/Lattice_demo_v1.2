@@ -54,8 +54,10 @@ export interface PipelineResult {
   createdAt: string;
   disposition: Disposition;
   unconstrained: string;
+  baselineSource?: "ollama" | "fallback";
+  baselineModel?: string | null;
   trace: OperatorTrace;
-  /** Authored demo traces or client-side deterministic simulation. No live API path. */
+  /** Authored demo traces or client-side deterministic simulation. */
   source: "example" | "simulated";
 }
 
